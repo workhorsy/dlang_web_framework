@@ -4,6 +4,9 @@
 
 import std.process;
 
+int fcgi_init() {
+	return c_fcgi_init();
+}
 
 int fcgi_accept() {
 	return c_fcgi_accept();
@@ -65,6 +68,7 @@ private:
 
 extern (C):
 
+int c_fcgi_init();
 void c_fcgi_write_stderr(char* message, size_t length);
 int c_fcgi_accept();
 void c_fcgi_printf(char* message);

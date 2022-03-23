@@ -9,6 +9,10 @@ void c_fcgi_write_stderr(char* message, size_t length) {
 	FCGI_fwrite(message, length, 1, FCGI_stderr);
 }
 
+int c_fcgi_init() {
+	return FCGX_Init();
+}
+
 int c_fcgi_accept() {
 	return FCGI_Accept();
 }

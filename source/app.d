@@ -12,6 +12,8 @@ import fcgi;
 
 
 int main() {
+	fcgi_init();
+
 	auto server = new HttpServer("Dlang HTTP Server");
 	HttpRequest request;
 	ushort status;

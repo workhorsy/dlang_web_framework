@@ -1,5 +1,13 @@
 # dlang_web_framework
 
+# TODO:
+
+* extract http to HttpServer
+* add unit tests
+* add client side D using wasm https://wiki.dlang.org/Generating_WebAssembly_with_LDC
+* make it work with fastcgi and socket server
+* sessions via shared memory
+
 # setup fcgi on ubuntu:
 ```sh
 sudo apt-get install lighttpd php5-cgi

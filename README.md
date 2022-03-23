@@ -8,12 +8,6 @@
 * make it work with fastcgi and socket server
 * sessions via shared memory
 
-sudo apt-get install build-essential libfcgi-dev nginx spawn-fcgi
-sudo mv /etc/nginx/nginx.conf /etc/nginx/old_nginx.conf.original
-sudo ln -s `pwd`/nginx.conf /etc/nginx/nginx.conf
-sudo service nginx force-reload
-spawn-fcgi -p 8000 -n app.fcgi
-
 # Setup nginx with fcgi on ubuntu:
 ```sh
 sudo apt-get install build-essential libfcgi-dev nginx spawn-fcgi

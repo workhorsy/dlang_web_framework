@@ -4,7 +4,7 @@
 
 import helpers : Dictionary;
 
-class Request {
+class HttpRequest {
 	private bool _has_rendered = false;
 	private bool _was_format_specified;
 	private string _method = null;

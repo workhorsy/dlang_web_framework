@@ -44,8 +44,8 @@ bool fcgi_accept(out char[] request) {
 }
 
 // FIXME: Rename to fcgi_write_response
-void fcgi_printf(char[] message) {
-	c_fcgi_printf(message.ptr);
+void fcgi_printf(string message) {
+	c_fcgi_printf((cast(char[]) message).ptr);
 }
 
 // FIXME: Rename to fcgi_read_request_body

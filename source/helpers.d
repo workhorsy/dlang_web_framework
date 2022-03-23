@@ -44,6 +44,29 @@ class Dictionary {
 	}
 }
 
+void prints(string message) {
+	import std.stdio : stdout;
+	debug {
+		stdout.writeln(message); stdout.flush();
+	}
+}
+
+void prints(alias fmt, A...)(A args)
+if (isSomeString!(typeof(fmt))) {
+	import std.format : checkFormatException;
+
+	alias e = checkFormatException!(fmt, A);
+	static assert(!e, e.msg);
+	return prints(fmt, args);
+}
+
+void prints(Char, A...)(in Char[] fmt, A args) {
+	import std.stdio : stdout;
+	debug {
+		stdout.writefln(fmt, args); stdout.flush();
+	}
+}
+
 bool pair(S)(S value, S separator, out S[] retval)
 if (isSomeString!S) {
 	import std.string : indexOf;

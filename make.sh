@@ -58,6 +58,17 @@ run() {
 	set +x
 }
 
+small() {
+	set -x
+	gcc -os -c -Wall -Werror source/fcgi.c -o fcgi.o -lfcgi
+	ar rcs clibs.a fcgi.o
+	$DC -Oz -w -of app.fcgi source/*.d -L clibs.a -L-lfcgi
+	strip -s app.fcgi
+	chmod +x app.fcgi
+	spawn-fcgi -p 8000 -n app.fcgi
+	set +x
+}
+
 if [[ "$1" == "run" ]]; then
 	run
 elif [[ "$1" == "clean" ]]; then

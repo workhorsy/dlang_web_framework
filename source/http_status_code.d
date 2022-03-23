@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
 // This file is licensed under the MIT License
-// https://github.com/workhorsy/fastcgi_example
+// https://github.com/workhorsy/dlang_web_framework
 
 enum string[ushort] status_code = [
 	100 : "Continue",

@@ -11,6 +11,7 @@
 # Setup nginx with fcgi on ubuntu:
 ```sh
 sudo apt-get install build-essential libfcgi-dev nginx spawn-fcgi
+sudo service nginx start
 ```
 # Setup nginx config
 ```sh

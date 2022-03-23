@@ -8,7 +8,6 @@ import mime_types;
 import http_status_code;
 import http_request;
 import std.string : format;
-import std.traits : isSomeString;
 import std.digest.sha;
 
 bool _is_fcgi = true;

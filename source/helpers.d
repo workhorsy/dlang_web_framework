@@ -2,10 +2,9 @@
 // This file is licensed under the MIT License
 // https://github.com/workhorsy/dlang_web_framework
 
-import fcgi;
-import std.string : format;
+
 import std.traits : isSomeString;
-import std.digest.sha;
+
 
 class Dictionary {
 	public string value = null;

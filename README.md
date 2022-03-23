@@ -8,27 +8,24 @@
 * make it work with fastcgi and socket server
 * sessions via shared memory
 
-# setup fcgi on ubuntu:
+sudo apt-get install build-essential libfcgi-dev nginx spawn-fcgi
+sudo mv /etc/nginx/nginx.conf /etc/nginx/old_nginx.conf.original
+sudo ln -s `pwd`/nginx.conf /etc/nginx/nginx.conf
+sudo service nginx force-reload
+spawn-fcgi -p 8000 -n app.fcgi
+
+# Setup nginx with fcgi on ubuntu:
 ```sh
-sudo apt-get install lighttpd php5-cgi
-sudo lighty-enable-mod fastcgi
-sudo /etc/init.d/lighttpd force-reload
+sudo apt-get install build-essential libfcgi-dev nginx spawn-fcgi
+```
+# Setup nginx config
+```sh
+sudo mv /etc/nginx/nginx.conf /etc/nginx/old_nginx.conf.original
+sudo ln -s `pwd`/nginx.conf /etc/nginx/nginx.conf
+sudo service nginx force-reload
 ```
 
-# change the port in /etc/lighttpd/lighttpd.conf :
+# Build app and run under fcgi:
 ```sh
-server.port               = 90
-```
-
-# change /etc/lighttpd/conf-available/10-fastcgi.conf :
-```sh
-fastcgi.server = ( "/" =>
-	((
-		"max-procs" => 1,
-		"bin-path" => "/home/matt/fastcgi/application",
-		"socket" => "/tmp/application.socket",
-		"check-local" => "disable",
-		"max-request-size" => 100000
-	))
-)
+./make.sh run
 ```

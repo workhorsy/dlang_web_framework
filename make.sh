@@ -54,6 +54,7 @@ run() {
 	ar rcs clibs.a fcgi.o
 	$DC -g -w -of app.fcgi source/*.d -L clibs.a -L-lfcgi
 	chmod +x app.fcgi
+	spawn-fcgi -p 8000 -n app.fcgi
 	set +x
 }
 

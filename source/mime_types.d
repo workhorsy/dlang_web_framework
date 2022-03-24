@@ -18,4 +18,5 @@ enum string[string] mime_type_map = [
 	"xml" : "text/xml",
 	"text" : "text/plain",
 	"txt" : "text/plain",
+	"wasm" : "application/wasm",
 ];

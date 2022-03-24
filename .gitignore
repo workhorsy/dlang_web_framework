@@ -6,7 +6,8 @@
 *.so
 *.dylib
 *.dll
-*fcgi
+*.fcgi
+*.wasm
 
 # Compiled Static libraries
 *.a

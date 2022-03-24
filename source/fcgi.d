@@ -56,12 +56,17 @@ void fcgi_get_stdin(char[] buffer) {
 	c_fcgi_get_stdin(buffer.ptr, buffer.length);
 }
 
+void fcgi_write_stdout(char[] message) {
+	c_fcgi_write_stdout(message.ptr, message.length);
+}
+
 void fcgi_write_stderr(char[] message) {
 	c_fcgi_write_stderr(message.ptr, message.length);
 }
 
-void fcgi_puts(char[] message) {
-	c_fcgi_puts(message.ptr);
+void fcgi_puts(S)(S message)
+/*if (isSomeString!S)*/ {
+	c_fcgi_puts(cast(char*) message.ptr);
 }
 
 private:
@@ -69,6 +74,7 @@ private:
 extern (C):
 
 int c_fcgi_init();
+void c_fcgi_write_stdout(char* message, size_t length);
 void c_fcgi_write_stderr(char* message, size_t length);
 int c_fcgi_accept();
 void c_fcgi_printf(char* message);

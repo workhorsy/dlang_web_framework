@@ -5,7 +5,7 @@
 import helpers : Dictionary;
 
 class HttpRequest {
-	private bool _has_rendered = false;
+	//private bool _has_rendered = false;
 	private bool _was_format_specified;
 	private string _method = null;
 	private string _uri = null;
@@ -31,7 +31,7 @@ class HttpRequest {
 		_params = new Dictionary();
 	}
 
-	public bool has_rendered() { return _has_rendered; }
+	//public bool has_rendered() { return _has_rendered; }
 	public bool was_format_specified() { return _was_format_specified; }
 	public string method() { return _method; }
 	public string uri() { return _uri; }
@@ -39,7 +39,7 @@ class HttpRequest {
 	public string http_version() { return _http_version; }
 	public uint content_length() { return _content_length; }
 
-	public void has_rendered(bool value) { _has_rendered = value; }
+	//public void has_rendered(bool value) { _has_rendered = value; }
 	public void was_format_specified(bool value) { _was_format_specified = value; }
 	public void method(string value) { _method = value; }
 	public void uri(string value) { _uri = value; }

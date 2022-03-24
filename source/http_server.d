@@ -10,6 +10,7 @@ import http_request;
 import http_server;
 import std.string : format;
 import std.digest.sha;
+import std.traits : isSomeString;
 
 class HttpServer {
 	char[] _raw_request;
@@ -41,9 +42,11 @@ class HttpServer {
 		return is_success;
 	}
 
-	void write_response(HttpRequest request, ushort status_code, string content_type, string text) {
+	void write_response(S)(HttpRequest request, ushort status_code, string content_type, S text)
+	/*if (isSomeString!S)*/ {
 		string raw_response = generate_http_response(request, _is_fcgi, _server_name, status_code, content_type, text);
 		fcgi_puts(cast(char[]) raw_response);
+		fcgi_puts(text);
 	}
 
 
@@ -425,21 +428,22 @@ HttpRequest parse_http_request_header(char[] raw_request, out ushort status) {
 	return request;
 }
 
-string generate_http_response(HttpRequest request, bool is_fcgi, string server_name, ushort status_code, string content_type, string text) {
+string generate_http_response(S)(HttpRequest request, bool is_fcgi, string server_name, ushort status, string content_type, S text)
+/*if (isSomeString!S)*/ {
 	import std.string : format;
 	import std.stdio;
 
 	// Get the status code
-	string status = get_verbose_status_code(status_code);
+	string status_message = get_verbose_status_code(status);
 
 	import std.datetime.systime : SysTime, Clock;
 	import std.datetime.date : DateTime;
 	SysTime now = Clock.currTime();
 	// FIXME: Uses wrong date format
 	// Mon, 23 May 2005 22:38:34 GMT
-	string http_version = is_fcgi ? "" : "HTTP/1.1 ";
+	string http_version = is_fcgi ? "HTTP/1.1 " : "HTTP/1.1 ";
 	string retval =
-	"%s%s\r\n".format(http_version, status) ~
+	"%s%s\r\n".format(http_version, status_message) ~
 	"Date: %s\r\n".format(now.toSimpleString()) ~
 	"Server: %s\r\n".format(server_name);
 
@@ -457,7 +461,7 @@ string generate_http_response(HttpRequest request, bool is_fcgi, string server_n
 	"Content-Type: %s\r\n".format(content_type) ~
 	"Content-Length: %s\r\n".format(text.length) ~
 	//"Vary: User-Agent\r\n",
-	"\r\n" ~ text;
+	"\r\n";
 
 	return retval;
 }

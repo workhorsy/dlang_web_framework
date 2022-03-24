@@ -5,6 +5,10 @@
 #include <fastcgi.h>
 #include <fcgi_stdio.h>
 
+void c_fcgi_write_stdout(char* message, size_t length) {
+	FCGI_fwrite(message, length, 1, FCGI_stdout);
+}
+
 void c_fcgi_write_stderr(char* message, size_t length) {
 	FCGI_fwrite(message, length, 1, FCGI_stderr);
 }

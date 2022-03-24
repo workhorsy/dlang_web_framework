@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Dlang Web Framework</title>
+	</head>
+	<body>
+		<script>
+			const request = new XMLHttpRequest();
+			request.open('GET', 'wasm.wasm');
+			request.responseType = 'arraybuffer';
+			request.onload = () => {
+				console.log('response received');
+				const bytes = request.response;
+				const importObject = {};
+				WebAssembly.instantiate(bytes, importObject).then(result => {
+					console.log('instantiated');
+					const { exports } = result.instance;
+					// finally, call the add() function implemented in D:
+					const r = exports.add(42, -2.5);
+					console.log('r = ' + r);
+				});
+			};
+			request.send();
+			console.log('request sent');
+		</script>
+	</head>
+	<body>
+	Doing stuff in the console ...
+	</body>
+</html>

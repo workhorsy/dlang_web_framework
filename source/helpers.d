@@ -11,34 +11,19 @@ class Dictionary {
 	public Dictionary[string] named_items = null;
 	public Dictionary[size_t] array_items = null;
 
-	/++
-	Returns: the value associated with a string key.
-	Params:
-	 key = the associative array key as a string.
-	+/
 	public Dictionary opIndex(string key) {
 		// Initialize the value if it does not exist.
-		if ((key in this.named_items) == null)
+		if (key !in this.named_items)
 			this.named_items[key] = new Dictionary();
 		return this.named_items[key];
 	}
 
-	/++
-	Returns: the value associated with a number key.
-	Params:
-	 key = the associative array key as a size_t.
-	+/
 	public Dictionary opIndex(size_t i) {
-		if ((i in this.array_items) == null)
+		if (i !in this.array_items)
 			this.array_items[i] = new Dictionary();
 		return this.array_items[i];
 	}
 
-	/++
-	Returns: true if the associative array uses the string key.
-	Params:
-	 key = the associative array key as a string.
-	+/
 	public bool has_key(string key) {
 		return(this.named_items != null && (key in this.named_items) != null);
 	}
@@ -160,7 +145,8 @@ char char_to_hex(char c) {
 	return cast(char) retval;
 }
 
-char[] escape(char[] unescaped) {
+S escape(S)(S unescaped)
+if (isSomeString!S) {
 	size_t len = unescaped.length;
 	size_t i, j;
 
@@ -202,10 +188,11 @@ char[] escape(char[] unescaped) {
 		}
 	}
 
-	return escaped;
+	return cast(S) escaped;
 }
 
-char[] unescape(char[] escaped) {
+S unescape(S)(S escaped)
+if (isSomeString!S) {
 	import std.algorithm.searching : count;
 	size_t i, j;
 
@@ -234,5 +221,5 @@ char[] unescape(char[] escaped) {
 		}
 	}
 
-	return unescaped;
+	return cast(S) unescaped;
 }

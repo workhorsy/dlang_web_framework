@@ -4,7 +4,6 @@
 
 * Make sending files not allocate
 * Make sending files stream large files
-* changed nested function calls with chains
 * replace char[] with string and remove unneeded casting from/to string/char[]
 * add unit tests
 * add client side D using wasm https://wiki.dlang.org/Generating_WebAssembly_with_LDC

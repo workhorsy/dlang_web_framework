@@ -5,9 +5,9 @@
 
 
 import http_request;
+import std.traits : isSomeString;
 
 class HttpServer {
-	import std.traits : isSomeString;
 	import std.digest.sha;
 
 	bool _is_fcgi = true;
@@ -38,7 +38,7 @@ class HttpServer {
 	}
 
 	void write_response(S)(HttpRequest request, ushort status_code, string content_type, S text)
-	/*if (isSomeString!S)*/ {
+	if (isSomeString!S) {
 		import fcgi;
 
 		string response_header = generate_http_response_header(request, _is_fcgi, _server_name, status_code, content_type, text);
@@ -157,11 +157,11 @@ class HttpServer {
 		request.uri = first_line[1];
 		request.format = before(after_last(after_last(request.uri, "/"), "."), "?");
 		request.was_format_specified = (request.format != "");
-		if (!request.was_format_specified) request.format = "html";
+		if (! request.was_format_specified) request.format = "html";
 		request.http_version = first_line[2];
 
 		// If the format is unknown, return a 415 error
-		if (!(request.format in mime_type_map)) {
+		if (! (request.format in mime_type_map)) {
 			_response = cast(char[]) render_text(request, "415 Unsupported Media Type: The server does not understand the '%s' format.".format(request.format), 415, "txt");
 			return;
 		}
@@ -221,14 +221,14 @@ class HttpServer {
 
 		if (request.method == "POST" || request.method == "PUT") {
 			// Make sure the Content-Length field exist
-			if (!("Content-Length" in request._fields)) {
+			if (! ("Content-Length" in request._fields)) {
 				_response = cast(char[]) render_text(request, "411 Length Required: Content-Length is required for HTTP POST and PUT.", 411);
 				return;
 			}
 			request.content_length = request._fields["Content-Length"].to!ushort;
 
 			// Make sure the Content-Type field exist
-			if (!("Content-Type" in request._fields)) {
+			if (! ("Content-Type" in request._fields)) {
 				_response = cast(char[]) render_text(request, "415 Unsupported Media Type: A valid Content-Type is required for HTTP POST and PUT.", 415);
 				return;
 			}
@@ -273,7 +273,7 @@ class HttpServer {
 
 		// Create a new session if we need it
 		string hashed_session_id = null;
-		if (!has_session) {
+		if (! has_session) {
 			// Get the next session_id and increment the sequence
 			int new_session_id = _session_id++;
 
@@ -351,7 +351,6 @@ HttpRequest parse_http_request_header(string raw_request, out ushort status) {
 
 	//write_to_log(raw_request);
 	auto request = new HttpRequest();
-	char[] _fcgi_raw_body = null;
 	int len = 0;
 
 	// Read the request header
@@ -365,20 +364,20 @@ HttpRequest parse_http_request_header(string raw_request, out ushort status) {
 	}
 
 	// Get the raw header from the buffer
-	string raw_header = cast(string) raw_request[0 .. header_end];
+	string raw_header = raw_request[0 .. header_end];
 
 	// Get the header info
 	string[] header_lines = raw_header.splitLines();
 	string[] first_line = header_lines[0].split(" ");
 	request.method = first_line[0];
 	request.uri = first_line[1];
-	request.format = before(after_last(after_last(request.uri, "/"), "."), "?");
+	request.format = request.uri.after_last("/").after_last(".").before("?");
 	request.was_format_specified = (request.format != "");
-	if (!request.was_format_specified) request.format = "html";
+	if (! request.was_format_specified) request.format = "html";
 	request.http_version = first_line[2];
 
 	// If the format is unknown, return a 415 error
-	if (!(request.format in mime_type_map)) {
+	if (request.format !in mime_type_map) {
 		status = 415;
 		//_response = cast(char[]) render_text(request, "415 Unsupported Media Type: The server does not understand the '%s' format.".format(request.format), 415, "txt");
 		return request;
@@ -398,15 +397,15 @@ HttpRequest parse_http_request_header(string raw_request, out ushort status) {
 	// Determine if the client has cookie support
 	bool has_cookie_support = true;
 	if ("User-Agent" in request._fields) {
-		has_cookie_support = !contains(request._fields["User-Agent"], "ApacheBench");
+		has_cookie_support = ! request._fields["User-Agent"].contains("ApacheBench");
 	}
 
 	// Get the cookies
 	if (has_cookie_support && ("Cookie" in request._fields) != null) {
-		foreach (string cookie ; split(request._fields["Cookie"], "; ")) {
+		foreach (string cookie ; request._fields["Cookie"].split("; ")) {
 			string[] _pair;
-			if (pair(cookie, "=", _pair)) {
-				request._cookies[_pair[0]] = cast(string) unescape(cast(char[])_pair[1]);
+			if (cookie.pair("=", _pair)) {
+				request._cookies[_pair[0]] = unescape(_pair[1]);
 			} else {
 //				this.write_to_log("Malformed cookie: " ~ cookie ~ "\n");
 			}
@@ -414,11 +413,11 @@ HttpRequest parse_http_request_header(string raw_request, out ushort status) {
 	}
 
 	// Get the HTTP GET params
-	if (contains(request.uri, "?")) {
-		foreach (string param ; split(after(request.uri, "?"), "&")) {
+	if (request.uri.contains("?")) {
+		foreach (string param ; request.uri.after("?").split("&")) {
 			string[] _pair;
-			if (pair(param, "=", _pair)) {
-				request._params[cast(string) unescape(cast(char[]) _pair[0])].value = cast(string) unescape(cast(char[])_pair[1]);
+			if (param.pair("=", _pair)) {
+				request._params[unescape(_pair[0])].value = unescape(_pair[1]);
 			}
 		}
 	}
@@ -442,7 +441,7 @@ HttpRequest parse_http_request_header(string raw_request, out ushort status) {
 }
 
 string generate_http_response_header(S)(HttpRequest request, bool is_fcgi, string server_name, ushort status, string content_type, S text)
-/*if (isSomeString!S)*/ {
+if (isSomeString!S) {
 	import helpers;
 	import http_status_code;
 	import std.string : format;
@@ -464,7 +463,7 @@ string generate_http_response_header(S)(HttpRequest request, bool is_fcgi, strin
 
 	// Get all the new cookie values to send
 	foreach (string name, string value ; request._cookies) {
-		retval ~= "Set-Cookie: %s=%s\r\n".format(name, escape(cast(char[]) value));
+		retval ~= "Set-Cookie: %s=%s\r\n".format(name, escape(value));
 	}
 
 	retval ~= "Status: %s\r\n".format(status);

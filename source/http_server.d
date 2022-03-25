@@ -44,8 +44,8 @@ class HttpServer {
 
 	void write_response(S)(HttpRequest request, ushort status_code, string content_type, S text)
 	/*if (isSomeString!S)*/ {
-		string raw_response = generate_http_response(request, _is_fcgi, _server_name, status_code, content_type, text);
-		fcgi_write_stdout(cast(char[]) raw_response);
+		string response_header = generate_http_response_header(request, _is_fcgi, _server_name, status_code, content_type, text);
+		fcgi_write_stdout(cast(char[]) response_header);
 		fcgi_write_stdout(cast(char[]) text);
 	}
 
@@ -63,18 +63,7 @@ class HttpServer {
 			f.rawRead(content);
 		}
 
-		// FIXME: Change this to use the D server.write_response instead of the C fcgi functions
-		string message =
-		//"HTTP/1.1 200 OK\r\n" ~
-		"Status: 200\r\n" ~
-		"Access-Control-Allow-Origin: *\r\n" ~
-		"Cache-Control: private, max-age=0\r\n" ~
-		"Content-Type: %s\r\n".format(content_type) ~
-		"Context-Length: %s\r\n".format(content.length) ~
-		"\r\n";
-
-		fcgi_write_stdout(cast(char[]) message);
-		fcgi_write_stdout(cast(char[]) content);
+		this.write_response(request, status_code, content_type, content);
 	}
 
 /+
@@ -454,7 +443,7 @@ HttpRequest parse_http_request_header(char[] raw_request, out ushort status) {
 	return request;
 }
 
-string generate_http_response(S)(HttpRequest request, bool is_fcgi, string server_name, ushort status, string content_type, S text)
+string generate_http_response_header(S)(HttpRequest request, bool is_fcgi, string server_name, ushort status, string content_type, S text)
 /*if (isSomeString!S)*/ {
 	import std.string : format;
 	import std.stdio;

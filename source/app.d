@@ -23,11 +23,11 @@ int main() {
 		switch (status) {
 			case 413:
 				string message = "413 Request Entity Too Large: The HTTP header is bigger than the max header size.";
-				server.write_response(request, status, mime_type_map["text"], cast(char[]) message);
+				server.write_response(request, status, mime_type_map["text"], message);
 				continue;
 			case 415:
 				string message = "415 Unsupported Media Type: The server does not understand the '%s' format.".format(request.format);
-				server.write_response(request, status, mime_type_map["text"], cast(char[]) message);
+				server.write_response(request, status, mime_type_map["text"], message);
 				continue;
 			default:
 				break;

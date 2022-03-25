@@ -7,24 +7,25 @@ import std.traits : isSomeString;
 
 
 class Dictionary {
-	public string value = null;
-	public Dictionary[string] named_items = null;
-	public Dictionary[size_t] array_items = null;
+	string value = null;
+	// FIXME: Replace these with a single AA of Variant[string]
+	Dictionary[string] named_items = null;
+	Dictionary[size_t] array_items = null;
 
-	public Dictionary opIndex(string key) {
+	Dictionary opIndex(string key) {
 		// Initialize the value if it does not exist.
 		if (key !in this.named_items)
 			this.named_items[key] = new Dictionary();
 		return this.named_items[key];
 	}
 
-	public Dictionary opIndex(size_t i) {
+	Dictionary opIndex(size_t i) {
 		if (i !in this.array_items)
 			this.array_items[i] = new Dictionary();
 		return this.array_items[i];
 	}
 
-	public bool has_key(string key) {
+	bool has_key(string key) {
 		return(this.named_items != null && (key in this.named_items) != null);
 	}
 }
@@ -109,6 +110,7 @@ if (isSomeString!S) {
 	return value[start .. $];
 }
 
+// FIXME: Replace with phobos
 bool contains(S)(S value, S match)
 if (isSomeString!S) {
 	import std.algorithm : find;
@@ -121,6 +123,7 @@ if (isSomeString!S) {
 	return find(value, match) != "";
 }
 
+// FIXME: Replace with phobos
 char hex_to_char(char c) {
 	int retval;
 	if (c >= '0' && c <= '9')
@@ -133,6 +136,7 @@ char hex_to_char(char c) {
 	return cast(char) retval;
 }
 
+// FIXME: Replace with phobos
 char char_to_hex(char c) {
 	int retval;
 	if (c >= 0 && c <= 9)
@@ -145,6 +149,7 @@ char char_to_hex(char c) {
 	return cast(char) retval;
 }
 
+// FIXME: Replace with phobos
 S escape(S)(S unescaped)
 if (isSomeString!S) {
 	size_t len = unescaped.length;
@@ -191,6 +196,7 @@ if (isSomeString!S) {
 	return cast(S) escaped;
 }
 
+// FIXME: Replace with phobos
 S unescape(S)(S escaped)
 if (isSomeString!S) {
 	import std.algorithm.searching : count;

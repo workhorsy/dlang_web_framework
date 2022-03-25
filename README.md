@@ -2,6 +2,9 @@
 
 # TODO:
 
+* Add client side D that talks to server side D
+* pure D client side template, or template language? look at other frameworks.
+
 * Make sending files not allocate
 * Make sending files stream large files
 * replace char[] with string and remove unneeded casting from/to string/char[]

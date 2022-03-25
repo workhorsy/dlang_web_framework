@@ -2,11 +2,18 @@
 
 # TODO:
 
-* extract http to HttpServer
+* Move generated files to build dir
+* Replace all fcgi_puts calls with fcgi_write_stdout
+* Make sending files not allocate
+* Make sending files stream large files
+* Remove fcgi calls from app
+* changed nested function calls with chains
+* replace char[] with string and remove unneeded casting from/to string/char[]
 * add unit tests
 * add client side D using wasm https://wiki.dlang.org/Generating_WebAssembly_with_LDC
 * make it work with fastcgi and socket server
 * sessions via shared memory
+* Recompile in browser via ldc built with wasm?
 
 # Setup nginx with fcgi on ubuntu:
 ```sh

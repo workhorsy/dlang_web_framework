@@ -12,8 +12,6 @@ class HttpServer {
 
 	bool _is_fcgi = true;
 	//bool _is_production = false;
-	//char[] _response;
-	//auto _buffer = new char[1024 * 10];
 	string _server_name = "Dlang HTTP Server";
 	SHA1Digest _sha_encoder;
 
@@ -34,7 +32,7 @@ class HttpServer {
 		string raw_request;
 		bool is_success = fcgi_accept(raw_request);
 		if (is_success) {
-			request = parse_http_request_header(cast(char[]) raw_request, status);
+			request = parse_http_request_header(raw_request, status);
 		}
 		return is_success;
 	}
@@ -44,8 +42,8 @@ class HttpServer {
 		import fcgi;
 
 		string response_header = generate_http_response_header(request, _is_fcgi, _server_name, status_code, content_type, text);
-		fcgi_write_stdout(cast(char[]) response_header);
-		fcgi_write_stdout(cast(char[]) text);
+		fcgi_write_stdout(response_header);
+		fcgi_write_stdout(text);
 	}
 
 	void write_file(HttpRequest request, ushort status_code, string content_type, string file_name) {
@@ -55,7 +53,7 @@ class HttpServer {
 
 		// FIXME: Change this to use a pre allocated buffer and stream the file
 		auto f = File(file_name, "rb");
-		ubyte[] content = new ubyte[f.size()];
+		char[] content = new char[f.size()];
 		{
 			scope (exit) f.close();
 			f.rawRead(content);
@@ -345,7 +343,7 @@ class HttpServer {
 +/
 }
 
-HttpRequest parse_http_request_header(char[] raw_request, out ushort status) {
+HttpRequest parse_http_request_header(string raw_request, out ushort status) {
 	import helpers;
 	import mime_types;
 	import std.string : indexOf, format, splitLines, split;

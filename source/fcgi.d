@@ -2,6 +2,7 @@
 // This file is licensed under the MIT License
 // https://github.com/workhorsy/dlang_web_framework
 
+import std.traits : isSomeString;
 
 int fcgi_init() {
 	return c_fcgi_init();
@@ -41,24 +42,28 @@ bool fcgi_accept(out string request) {
 	return true;
 }
 
-void fcgi_printf(string message) {
-	c_fcgi_printf((cast(char[]) message).ptr);
+void fcgi_printf(S)(S message)
+if (isSomeString!S) {
+	c_fcgi_printf(message.ptr);
 }
 
-void fcgi_get_stdin(char[] buffer) {
+void fcgi_get_stdin(S)(S buffer)
+if (isSomeString!S) {
 	c_fcgi_get_stdin(buffer.ptr, buffer.length);
 }
 
-void fcgi_write_stdout(char[] message) {
+void fcgi_write_stdout(S)(S message)
+if (isSomeString!S) {
 	c_fcgi_write_stdout(message.ptr, message.length);
 }
 
-void fcgi_write_stderr(char[] message) {
+void fcgi_write_stderr(S)(S message)
+if (isSomeString!S) {
 	c_fcgi_write_stderr(message.ptr, message.length);
 }
 
 void fcgi_puts(S)(S message)
-/*if (isSomeString!S)*/ {
+if (isSomeString!S) {
 	c_fcgi_puts(cast(char*) message.ptr);
 }
 
@@ -67,9 +72,9 @@ private:
 extern (C):
 
 int c_fcgi_init();
-void c_fcgi_write_stdout(char* message, size_t length);
-void c_fcgi_write_stderr(char* message, size_t length);
+void c_fcgi_write_stdout(const char* message, size_t length);
+void c_fcgi_write_stderr(const char* message, size_t length);
 int c_fcgi_accept();
-void c_fcgi_printf(char* message);
-void c_fcgi_puts(char* message);
+void c_fcgi_printf(const char* message);
+void c_fcgi_puts(const char* message);
 void c_fcgi_get_stdin(char* buffer, size_t len);

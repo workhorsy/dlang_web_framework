@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<!-- https://wiki.dlang.org/Generating_WebAssembly_with_LDC -->
+<!-- See: https://wiki.dlang.org/Generating_WebAssembly_with_LDC -->
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -8,23 +8,18 @@
 	</head>
 	<body>
 		<script>
-			const request = new XMLHttpRequest();
-			request.open('GET', 'wasm.wasm');
-			request.responseType = 'arraybuffer';
-			request.onload = () => {
-				console.log('response received');
-				const bytes = request.response;
-				const importObject = {};
-				WebAssembly.instantiate(bytes, importObject).then(result => {
-					console.log('instantiated');
-					const { exports } = result.instance;
-					// finally, call the add() function implemented in D:
-					const r = exports.add(42, -2.5);
-					console.log('r = ' + r);
-				});
-			};
-			request.send();
-			console.log('request sent');
+			const importObject = {};
+			fetch('wasm.wasm').then(response =>
+				response.arrayBuffer()
+			).then(bytes =>
+				WebAssembly.instantiate(bytes, importObject)
+			).then(result => {
+				const { exports } = result.instance;
+				const r = exports.add(42, -2.5);
+				console.log('r = ' + r);
+			}).catch(error => {
+				console.error(error);
+			});
 		</script>
 	</head>
 	<body>

@@ -10,8 +10,6 @@ class HttpServer {
 	import std.traits : isSomeString;
 	import std.digest.sha;
 
-	char[] _raw_request;
-
 	bool _is_fcgi = true;
 	//bool _is_production = false;
 	//char[] _response;
@@ -33,10 +31,10 @@ class HttpServer {
 		import fcgi;
 
 		request = null;
-
-		bool is_success = fcgi_accept(_raw_request);
+		string raw_request;
+		bool is_success = fcgi_accept(raw_request);
 		if (is_success) {
-			request = parse_http_request_header(_raw_request, status);
+			request = parse_http_request_header(cast(char[]) raw_request, status);
 		}
 		return is_success;
 	}

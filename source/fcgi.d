@@ -7,52 +7,44 @@ int fcgi_init() {
 	return c_fcgi_init();
 }
 
-int fcgi_accept() {
-	return c_fcgi_accept();
-}
-
-// FIXME: Rename to fcgi_read_request_header
-bool fcgi_accept(out char[] request) {
+bool fcgi_accept(out string request) {
 	import std.process : environment;
+	import std.string : format;
 
 	// Just return false on no connections
-	if(c_fcgi_accept() < 0)
+	if (c_fcgi_accept() < 0)
 		return false;
 
 	// Get the request data from the fcgi server
 	// These are called Standard CGI environment variables
-	char[] REQUEST_METHOD = cast(char[])environment.get("REQUEST_METHOD");
-	char[] REQUEST_URI = cast(char[])environment.get("REQUEST_URI");
-	char[] HTTP_USER_AGENT = cast(char[])environment.get("HTTP_USER_AGENT");
-	char[] HTTP_COOKIE = cast(char[])environment.get("HTTP_COOKIE");
-	char[] REMOTE_ADDR = cast(char[])environment.get("REMOTE_ADDR");
-	char[] HTTP_REFERER = cast(char[])environment.get("HTTP_REFERER");
-	char[] HTTP_HOST = cast(char[])environment.get("HTTP_HOST");
-	char[] CONTENT_LENGTH = cast(char[])environment.get("CONTENT_LENGTH");
-	char[] CONTENT_TYPE = cast(char[])environment.get("CONTENT_TYPE");
+	string REQUEST_METHOD = environment.get("REQUEST_METHOD");
+	string REQUEST_URI = environment.get("REQUEST_URI");
+	string HTTP_USER_AGENT = environment.get("HTTP_USER_AGENT");
+	string HTTP_COOKIE = environment.get("HTTP_COOKIE");
+	string REMOTE_ADDR = environment.get("REMOTE_ADDR");
+	string HTTP_REFERER = environment.get("HTTP_REFERER");
+	string HTTP_HOST = environment.get("HTTP_HOST");
+	string CONTENT_LENGTH = environment.get("CONTENT_LENGTH");
+	string CONTENT_TYPE = environment.get("CONTENT_TYPE");
 
 	// Reconstruct the request
-	request = REQUEST_METHOD ~ " " ~ REQUEST_URI ~ " HTTP/1.1\r\n";
-
-	if(HTTP_HOST) request ~= "Host: " ~ HTTP_HOST ~ "\r\n";
-	if(HTTP_USER_AGENT) request ~= "User-Agent: " ~ HTTP_USER_AGENT ~ "\r\n";
-	if(HTTP_COOKIE) request ~= "Cookie: " ~ HTTP_COOKIE ~ "\r\n";
-	if(REMOTE_ADDR) request ~= "Remove-Addr: " ~ REMOTE_ADDR ~ "\r\n";
-	if(HTTP_REFERER) request ~= "Referer: " ~ HTTP_REFERER ~ "\r\n";
-	if(CONTENT_TYPE) request ~= "Content-Type: " ~ CONTENT_TYPE ~ "\r\n";
-	if(CONTENT_LENGTH) request ~= "Content-Length: " ~ CONTENT_LENGTH ~ "\r\n";
-
+	request = "%s %s HTTP/1.1\r\n".format(REQUEST_METHOD, REQUEST_URI);
+	if (HTTP_HOST) request ~= "Host: %s\r\n".format(HTTP_HOST);
+	if (HTTP_USER_AGENT) request ~= "User-Agent: %s\r\n".format(HTTP_USER_AGENT);
+	if (HTTP_COOKIE) request ~= "Cookie: %s\r\n".format(HTTP_COOKIE);
+	if (REMOTE_ADDR) request ~= "Remove-Addr: %s\r\n".format(REMOTE_ADDR);
+	if (HTTP_REFERER) request ~= "Referer: %s\r\n".format(HTTP_REFERER);
+	if (CONTENT_TYPE) request ~= "Content-Type: %s\r\n".format(CONTENT_TYPE);
+	if (CONTENT_LENGTH) request ~= "Content-Length: %s\r\n".format(CONTENT_LENGTH);
 	request ~= "\r\n";
 
 	return true;
 }
 
-// FIXME: Rename to fcgi_write_response
 void fcgi_printf(string message) {
 	c_fcgi_printf((cast(char[]) message).ptr);
 }
 
-// FIXME: Rename to fcgi_read_request_body
 void fcgi_get_stdin(char[] buffer) {
 	c_fcgi_get_stdin(buffer.ptr, buffer.length);
 }

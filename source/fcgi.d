@@ -8,13 +8,17 @@ int fcgi_init() {
 	return c_fcgi_init();
 }
 
-bool fcgi_accept(out string request) {
-	import std.process : environment;
-	import std.string : format;
-
+bool fcgi_accept() {
 	// Just return false on no connections
 	if (c_fcgi_accept() < 0)
 		return false;
+
+	return true;
+}
+
+string fcgi_get_env_request() {
+	import std.process : environment;
+	import std.string : format;
 
 	// Get the request data from the fcgi server
 	// These are called Standard CGI environment variables
@@ -29,7 +33,7 @@ bool fcgi_accept(out string request) {
 	string CONTENT_TYPE = environment.get("CONTENT_TYPE");
 
 	// Reconstruct the request
-	request = "%s %s HTTP/1.1\r\n".format(REQUEST_METHOD, REQUEST_URI);
+	string request = "%s %s HTTP/1.1\r\n".format(REQUEST_METHOD, REQUEST_URI);
 	if (HTTP_HOST) request ~= "Host: %s\r\n".format(HTTP_HOST);
 	if (HTTP_USER_AGENT) request ~= "User-Agent: %s\r\n".format(HTTP_USER_AGENT);
 	if (HTTP_COOKIE) request ~= "Cookie: %s\r\n".format(HTTP_COOKIE);
@@ -39,7 +43,7 @@ bool fcgi_accept(out string request) {
 	if (CONTENT_LENGTH) request ~= "Content-Length: %s\r\n".format(CONTENT_LENGTH);
 	request ~= "\r\n";
 
-	return true;
+	return request;
 }
 
 void fcgi_printf(S)(S message)

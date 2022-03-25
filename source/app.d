@@ -14,11 +14,11 @@ int main() {
 	fcgi_init();
 
 	auto server = new HttpServer("Dlang HTTP Server");
-	HttpRequest request;
-	ushort status;
-	while (server.accept_request(request, status)) {
+	while (server.accept()) {
 		//fcgi_printf("!!!! request: %s\n".format(request));
 
+		ushort status;
+		HttpRequest request = server.read_request(status);
 		// Handle errors parsing request
 		switch (status) {
 			case 413:

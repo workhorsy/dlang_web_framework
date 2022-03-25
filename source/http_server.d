@@ -8,6 +8,7 @@ import http_request;
 import std.traits : isSomeString;
 
 class HttpServer {
+	import fcgi;
 	import std.digest.sha;
 
 	bool _is_fcgi = true;
@@ -25,22 +26,17 @@ class HttpServer {
 		_sha_encoder = new SHA1Digest();
 	}
 
-	bool accept_request(out HttpRequest request, out ushort status) {
-		import fcgi;
+	bool accept() {
+		return fcgi_accept();
+	}
 
-		request = null;
-		string raw_request;
-		bool is_success = fcgi_accept(raw_request);
-		if (is_success) {
-			request = parse_http_request_header(raw_request, status);
-		}
-		return is_success;
+	HttpRequest read_request(out ushort status) {
+		string raw_request = fcgi_get_env_request();
+		return parse_http_request_header(raw_request, status);
 	}
 
 	void write_response(S)(HttpRequest request, ushort status_code, string content_type, S text)
 	if (isSomeString!S) {
-		import fcgi;
-
 		string response_header = generate_http_response_header(request, _is_fcgi, _server_name, status_code, content_type, text);
 		fcgi_write_stdout(response_header);
 		fcgi_write_stdout(text);

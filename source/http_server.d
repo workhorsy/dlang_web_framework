@@ -45,8 +45,8 @@ class HttpServer {
 	void write_response(S)(HttpRequest request, ushort status_code, string content_type, S text)
 	/*if (isSomeString!S)*/ {
 		string raw_response = generate_http_response(request, _is_fcgi, _server_name, status_code, content_type, text);
-		fcgi_puts(cast(char[]) raw_response);
-		fcgi_puts(text);
+		fcgi_write_stdout(cast(char[]) raw_response);
+		fcgi_write_stdout(cast(char[]) text);
 	}
 
 	void write_file(HttpRequest request, ushort status_code, string content_type, string file_name) {

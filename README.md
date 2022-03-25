@@ -3,7 +3,6 @@
 # TODO:
 
 * Move generated files to build dir
-* Replace all fcgi_puts calls with fcgi_write_stdout
 * Make sending files not allocate
 * Make sending files stream large files
 * Remove fcgi calls from app

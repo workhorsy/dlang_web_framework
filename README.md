@@ -5,7 +5,6 @@
 * Move generated files to build dir
 * Make sending files not allocate
 * Make sending files stream large files
-* Remove fcgi calls from app
 * changed nested function calls with chains
 * replace char[] with string and remove unneeded casting from/to string/char[]
 * add unit tests

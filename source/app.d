@@ -2,13 +2,12 @@
 // This file is licensed under the MIT License
 // https://github.com/workhorsy/dlang_web_framework
 
-import helpers;
-import mime_types;
-import http_status_code;
-import http_request;
-import http_server;
+
+import mime_types : mime_type_map;
+import http_request : HttpRequest;
+import http_server : HttpServer;
 import std.string : format;
-import fcgi;
+import fcgi : fcgi_init;
 
 
 int main() {

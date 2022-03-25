@@ -2,9 +2,10 @@
 // This file is licensed under the MIT License
 // https://github.com/workhorsy/dlang_web_framework
 
-import helpers : Dictionary;
 
 class HttpRequest {
+	import helpers : Dictionary;
+
 	//private bool _has_rendered = false;
 	private bool _was_format_specified;
 	private string _method = null;

@@ -2,7 +2,6 @@
 // This file is licensed under the MIT License
 // https://github.com/workhorsy/dlang_web_framework
 
-import std.process;
 
 int fcgi_init() {
 	return c_fcgi_init();
@@ -14,6 +13,8 @@ int fcgi_accept() {
 
 // FIXME: Rename to fcgi_read_request_header
 bool fcgi_accept(out char[] request) {
+	import std.process : environment;
+
 	// Just return false on no connections
 	if(c_fcgi_accept() < 0)
 		return false;

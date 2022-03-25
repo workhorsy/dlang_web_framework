@@ -2,17 +2,14 @@
 // This file is licensed under the MIT License
 // https://github.com/workhorsy/dlang_web_framework
 
-import fcgi;
-import helpers;
-import mime_types;
-import http_status_code;
+
+
 import http_request;
-import http_server;
-import std.string : format;
-import std.digest.sha;
-import std.traits : isSomeString;
 
 class HttpServer {
+	import std.traits : isSomeString;
+	import std.digest.sha;
+
 	char[] _raw_request;
 
 	bool _is_fcgi = true;
@@ -33,6 +30,8 @@ class HttpServer {
 	}
 
 	bool accept_request(out HttpRequest request, out ushort status) {
+		import fcgi;
+
 		request = null;
 
 		bool is_success = fcgi_accept(_raw_request);
@@ -44,6 +43,8 @@ class HttpServer {
 
 	void write_response(S)(HttpRequest request, ushort status_code, string content_type, S text)
 	/*if (isSomeString!S)*/ {
+		import fcgi;
+
 		string response_header = generate_http_response_header(request, _is_fcgi, _server_name, status_code, content_type, text);
 		fcgi_write_stdout(cast(char[]) response_header);
 		fcgi_write_stdout(cast(char[]) text);
@@ -52,7 +53,6 @@ class HttpServer {
 	void write_file(HttpRequest request, ushort status_code, string content_type, string file_name) {
 		//server.write_response(request, status, mime_type_map["wasm"], cast(ubyte[]) read("wasm.wasm"));
 		import std.file : read;
-		import std.stdint;
 		import std.stdio : File;
 
 		// FIXME: Change this to use a pre allocated buffer and stream the file
@@ -348,6 +348,8 @@ class HttpServer {
 }
 
 HttpRequest parse_http_request_header(char[] raw_request, out ushort status) {
+	import helpers;
+	import mime_types;
 	import std.string : indexOf, format, splitLines, split;
 	import std.conv : to;
 
@@ -445,14 +447,16 @@ HttpRequest parse_http_request_header(char[] raw_request, out ushort status) {
 
 string generate_http_response_header(S)(HttpRequest request, bool is_fcgi, string server_name, ushort status, string content_type, S text)
 /*if (isSomeString!S)*/ {
+	import helpers;
+	import http_status_code;
 	import std.string : format;
 	import std.stdio;
+	import std.datetime.systime : SysTime, Clock;
+	import std.datetime.date : DateTime;
 
 	// Get the status code
 	string status_message = get_verbose_status_code(status);
 
-	import std.datetime.systime : SysTime, Clock;
-	import std.datetime.date : DateTime;
 	SysTime now = Clock.currTime();
 	// FIXME: Uses wrong date format
 	// Mon, 23 May 2005 22:38:34 GMT

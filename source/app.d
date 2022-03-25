@@ -36,9 +36,9 @@ int main() {
 
 		// Handle requests
 		if (request.method == "GET" && request.uri == "/index.html" || request.uri == "/") {
-			respond_with_file("index.html", mime_type_map["html"]);
+			server.write_file(request, status, mime_type_map["html"], "index.html");
 		} else if (request.method == "GET" && request.uri == "/wasm.wasm") {
-			respond_with_file("wasm.wasm", mime_type_map["wasm"]);
+			server.write_file(request, status, mime_type_map["wasm"], "wasm.wasm");
 		} else {
 			server.write_response(request, status, mime_type_map["text"], "Unknown route");
 		}
@@ -46,35 +46,3 @@ int main() {
 
 	return 0;
 }
-
-void respond_with_file(string file_name, string mime_type) {
-	//server.write_response(request, status, mime_type_map["wasm"], cast(ubyte[]) read("wasm.wasm"));
-	import std.file : read;
-	import std.stdint;
-	import std.stdio : File;
-
-	// FIXME: Change this to use a pre allocated buffer and stream the file
-	auto f = File(file_name, "rb");
-	ubyte[] content = new ubyte[f.size()];
-	{
-		scope (exit) f.close();
-		f.rawRead(content);
-	}
-
-	// FIXME: Change this to use the D server.write_response instead of the C fcgi functions
-	string message =
-	//"HTTP/1.1 200 OK\r\n" ~
-	"Status: 200\r\n" ~
-	"Access-Control-Allow-Origin: *\r\n" ~
-	"Cache-Control: private, max-age=0\r\n" ~
-	"Content-Type: %s\r\n".format(mime_type) ~
-	"Context-Length: %s\r\n".format(content.length) ~
-	"\r\n";
-
-	c_fcgi_write_stdout(cast(char*) message.ptr, message.length);
-	c_fcgi_write_stdout(cast(char*) content.ptr, content.length);
-}
-
-// FIXME: Remove this as it is already in fcgi.d
-extern (C) void c_fcgi_write_stdout(char* message, size_t length);
-extern (C) void c_fcgi_puts(char* message);

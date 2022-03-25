@@ -49,7 +49,33 @@ class HttpServer {
 		fcgi_puts(text);
 	}
 
+	void write_file(HttpRequest request, ushort status_code, string content_type, string file_name) {
+		//server.write_response(request, status, mime_type_map["wasm"], cast(ubyte[]) read("wasm.wasm"));
+		import std.file : read;
+		import std.stdint;
+		import std.stdio : File;
 
+		// FIXME: Change this to use a pre allocated buffer and stream the file
+		auto f = File(file_name, "rb");
+		ubyte[] content = new ubyte[f.size()];
+		{
+			scope (exit) f.close();
+			f.rawRead(content);
+		}
+
+		// FIXME: Change this to use the D server.write_response instead of the C fcgi functions
+		string message =
+		//"HTTP/1.1 200 OK\r\n" ~
+		"Status: 200\r\n" ~
+		"Access-Control-Allow-Origin: *\r\n" ~
+		"Cache-Control: private, max-age=0\r\n" ~
+		"Content-Type: %s\r\n".format(content_type) ~
+		"Context-Length: %s\r\n".format(content.length) ~
+		"\r\n";
+
+		fcgi_write_stdout(cast(char[]) message);
+		fcgi_write_stdout(cast(char[]) content);
+	}
 
 /+
 	string hash_and_base64(string value, string salt) {

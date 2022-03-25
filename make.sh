@@ -52,12 +52,12 @@ clean() {
 run() {
 	set -x
 	# Build client side code into wasm
-	ldc2 -mtriple=wasm32-unknown-unknown-wasm -betterC wasm/wasm.d
+	$DC -g -w -mtriple=wasm32-unknown-unknown-wasm -betterC wasm/wasm.d -of wasm.wasm
 
 	# Build server side code for fastcgi
 	gcc -g -c -Wall -Werror source/fcgi.c -o fcgi.o -lfcgi
 	ar rcs clibs.a fcgi.o
-	$DC -g -w -of app.fcgi source/*.d -L clibs.a -L-lfcgi
+	$DC -g -w source/*.d -L clibs.a -L-lfcgi -of app.fcgi
 
 	# Run the fastcgi server in nginx
 	chmod +x app.fcgi

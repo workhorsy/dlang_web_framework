@@ -7,22 +7,43 @@
 		<title>Dlang Web Framework</title>
 	</head>
 	<body>
-		<script>
-			const importObject = {};
-			fetch('wasm.wasm').then(response =>
-				response.arrayBuffer()
-			).then(bytes =>
-				WebAssembly.instantiate(bytes, importObject)
-			).then(result => {
-				const { exports } = result.instance;
-				const r = exports.add(42, -2.5);
-				console.log('r = ' + r);
-			}).catch(error => {
-				console.error(error);
-			});
-		</script>
-	</head>
-	<body>
-	Doing stuff in the console ...
+		<p>Click the buttons ...</p>
+		<button id="go">Click to boom!</button>
+		<button id="add">Click to add!</button>
 	</body>
+	<script>
+		let exports = {};
+
+		const console_log = (pointer, length) => {
+			const view = new Uint8Array(exports.memory.buffer, pointer, length);
+			let message = new TextDecoder().decode(view);
+			console.log(message);
+		};
+
+		const import_object = {
+			memory: new WebAssembly.Memory({ initial: 256, maximum: 256, shared: true }),
+			env: {
+				console_log,
+			},
+		};
+
+		fetch('wasm.wasm').then(response =>
+			response.arrayBuffer()
+		).then(bytes =>
+			WebAssembly.instantiate(bytes, import_object)
+		).then(result => {
+			exports = result.instance.exports;
+
+			let go = document.querySelector("#go");
+			go.addEventListener("click", exports.boom);
+
+			let add = document.querySelector("#add");
+			add.addEventListener("click", on_add);
+		});
+
+		function on_add() {
+			const r = exports.add(42, -2.5);
+			console.log('r = ' + r);
+		}
+	</script>
 </html>

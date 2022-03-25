@@ -2,7 +2,6 @@
 
 # TODO:
 
-* Move generated files to build dir
 * Make sending files not allocate
 * Make sending files stream large files
 * changed nested function calls with chains

@@ -51,16 +51,22 @@ clean() {
 
 run() {
 	set -x
+	rm -f -rf build
+
 	# Build client side code into wasm
-	$DC -g -w -mtriple=wasm32-unknown-unknown-wasm -betterC wasm/wasm.d -of wasm.wasm
+	$DC -g -w -mtriple=wasm32-unknown-unknown-wasm -betterC wasm/wasm.d -of build/wasm.wasm
 
 	# Build server side code for fastcgi
-	gcc -g -c -Wall -Werror source/fcgi.c -o fcgi.o -lfcgi
-	ar rcs clibs.a fcgi.o
-	$DC -g -w source/*.d -L clibs.a -L-lfcgi -of app.fcgi
+	gcc -g -c -Wall -Werror source/fcgi.c -lfcgi -o build/fcgi.o
+	ar rcs build/clibs.a build/fcgi.o
+	$DC -g -w source/*.d -L build/clibs.a -L-lfcgi -of build/app.fcgi
+
+	# Move client and server code into root
+	mv build/app.fcgi app.fcgi
+	mv build/wasm.wasm wasm.wasm
+	chmod +x app.fcgi
 
 	# Run the fastcgi server in nginx
-	chmod +x app.fcgi
 	spawn-fcgi -p 8000 -n app.fcgi
 	set +x
 }

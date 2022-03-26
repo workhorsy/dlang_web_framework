@@ -13,7 +13,12 @@ void js_console_log(const char* s, size_t len);
 size_t js_document_querySelector(const char* s, size_t len);
 void js_element_addEventListener(long id, char* event_name, size_t event_name_len, char* function_name, size_t function_name_len);
 
-
+static struct console {
+	static void log(string message) {
+		d_memory_copy(message, _arg1.memory, _arg1.len);
+		js_console_log(_arg1.memory.ptr, _arg1.len);
+	}
+}
 
 HtmlElement querySelector(string query) {
 	d_memory_copy(query, _arg1.memory, _arg1.len);

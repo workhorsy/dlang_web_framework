@@ -60,6 +60,7 @@ run() {
 	gcc -g -c -Wall -Werror source/fcgi.c -lfcgi -o build/fcgi.o
 	ar rcs build/clibs.a build/fcgi.o
 	$DC -g -w source/*.d -L build/clibs.a -L-lfcgi -of build/app.fcgi
+	#strip -s build/app.fcgi
 
 	# Move client and server code into root
 	mv build/app.fcgi app.fcgi
@@ -67,17 +68,6 @@ run() {
 	chmod +x app.fcgi
 
 	# Run the fastcgi server in nginx
-	spawn-fcgi -p 8000 -n app.fcgi
-	set +x
-}
-
-small() {
-	set -x
-	gcc -os -c -Wall -Werror source/fcgi.c -o fcgi.o -lfcgi
-	ar rcs clibs.a fcgi.o
-	$DC -Oz -w -of app.fcgi source/*.d -L clibs.a -L-lfcgi
-	strip -s app.fcgi
-	chmod +x app.fcgi
 	spawn-fcgi -p 8000 -n app.fcgi
 	set +x
 }

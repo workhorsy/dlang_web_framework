@@ -10,16 +10,16 @@ version (WebAssembly) {
 
 extern(C):
 
-import helpers : d_memory_copy;
-
 static struct console {
 	static void log(string message) {
+		import helpers : d_memory_copy;
 		d_memory_copy(message, _arg1.memory, _arg1.len);
 		js_console_log(_arg1.memory.ptr, _arg1.len);
 	}
 }
 
 HtmlElement querySelector(string query) {
+	import helpers : d_memory_copy;
 	d_memory_copy(query, _arg1.memory, _arg1.len);
 	long id = js_document_querySelector(_arg1.memory.ptr, _arg1.len);
 	if (id != -1) {
@@ -39,6 +39,7 @@ struct HtmlElement {
 	long id;
 
 	void addEventListener(string event_name, string function_name) {
+		import helpers : d_memory_copy;
 		d_memory_copy(event_name, _arg1.memory, _arg1.len);
 		d_memory_copy(function_name, _arg2.memory, _arg2.len);
 		js_element_addEventListener(id, _arg1.memory.ptr, _arg1.len, _arg2.memory.ptr, _arg2.len);

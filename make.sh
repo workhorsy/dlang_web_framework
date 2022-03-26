@@ -54,7 +54,7 @@ run() {
 	rm -f -rf build
 
 	# Build client side code into wasm
-	$DC -g -w -mtriple=wasm32-unknown-unknown-wasm -L-allow-undefined -betterC wasm/wasm.d -of build/wasm.wasm
+	$DC -g -w -mtriple=wasm32-unknown-unknown-wasm -L-allow-undefined -betterC wasm/*.d -of build/wasm.wasm
 
 	# Build server side code for fastcgi
 	gcc -g -c -Wall -Werror source/fcgi.c -lfcgi -o build/fcgi.o

@@ -22,9 +22,9 @@ void boom() {
 }
 
 void main() {
-	auto go = querySelector("#go");
+	auto go = document.querySelector("#go");
 	go.addEventListener("click", "exports.boom");
 
-	auto add = querySelector("#add");
+	auto add = document.querySelector("#add");
 	add.addEventListener("click", "on_add");
 }

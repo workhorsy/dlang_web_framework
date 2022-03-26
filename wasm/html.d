@@ -18,15 +18,17 @@ static struct console {
 	}
 }
 
-HtmlElement querySelector(string query) {
-	import helpers : d_memory_copy;
-	d_memory_copy(query, _arg1.memory, _arg1.len);
-	long id = js_document_querySelector(_arg1.memory.ptr, _arg1.len);
-	if (id != -1) {
-		HtmlElement element = HtmlElement(id);
-		return element;
-	} else {
-		return HtmlElement.init;
+static struct document {
+	static HtmlElement querySelector(string query) {
+		import helpers : d_memory_copy;
+		d_memory_copy(query, _arg1.memory, _arg1.len);
+		long id = js_document_querySelector(_arg1.memory.ptr, _arg1.len);
+		if (id != -1) {
+			HtmlElement element = HtmlElement(id);
+			return element;
+		} else {
+			return HtmlElement.init;
+		}
 	}
 }
 

@@ -24,6 +24,13 @@ void _d_array_slice_copy(void* dst, size_t dstlen, void* src, size_t srclen, siz
 	llvm_memcpy!size_t(dst, src, dstlen * elemsz, 0);
 }
 
+void d_memory_copy(string src, out char[1024] d_memory, out size_t d_memory_len) {
+	foreach (i ; 0 .. src.length) {
+		d_memory[i] = src[i];
+	}
+	d_memory_len = src.length;
+}
+
 // Wasm entry point
 void _start() {}
 

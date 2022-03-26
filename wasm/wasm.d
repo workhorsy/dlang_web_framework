@@ -2,7 +2,6 @@
 // BetterC
 extern(C):
 
-import helpers;
 import html;
 
 double add(double a, double b) {

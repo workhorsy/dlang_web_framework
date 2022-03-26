@@ -2,16 +2,7 @@
 // BetterC
 extern(C):
 
-struct Arg {
-	char[1024] memory = 0;
-	size_t len = 1024;
-}
-Arg _arg1;
-Arg _arg2;
-
-void js_console_log(const char* s, size_t len);
-size_t js_document_querySelector(const char* s, size_t len);
-void js_element_addEventListener(long id, char* event_name, size_t event_name_len, char* function_name, size_t function_name_len);
+import helpers : d_memory_copy;
 
 static struct console {
 	static void log(string message) {
@@ -31,6 +22,11 @@ HtmlElement querySelector(string query) {
 	}
 }
 
+struct Arg {
+	char[1024] memory = 0;
+	size_t len = 1024;
+}
+
 struct HtmlElement {
 	long id;
 
@@ -41,9 +37,11 @@ struct HtmlElement {
 	}
 }
 
-void d_memory_copy(string src, out char[1024] d_memory, out size_t d_memory_len) {
-	foreach (i ; 0 .. src.length) {
-		d_memory[i] = src[i];
-	}
-	d_memory_len = src.length;
-}
+private:
+
+void js_console_log(const char* s, size_t len);
+size_t js_document_querySelector(const char* s, size_t len);
+void js_element_addEventListener(long id, char* event_name, size_t event_name_len, char* function_name, size_t function_name_len);
+
+Arg _arg1;
+Arg _arg2;

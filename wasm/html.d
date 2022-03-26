@@ -10,6 +10,7 @@ version (WebAssembly) {
 
 extern(C):
 
+// FIXME: Move into module instead of struct
 static struct console {
 	static void log(string message) {
 		import helpers : d_memory_copy;
@@ -18,6 +19,7 @@ static struct console {
 	}
 }
 
+// FIXME: Move into module instead of struct
 static struct document {
 	static HtmlElement querySelector(string query) {
 		import helpers : d_memory_copy;

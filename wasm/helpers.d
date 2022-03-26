@@ -1,4 +1,7 @@
-
+// Copyright (c) 2022 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
+// Licensed under the MIT License
+// A Dlang web framework
+// https://github.com/workhorsy/dlang_web_framework
 
 version (WebAssembly) {
 } else {

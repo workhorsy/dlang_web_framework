@@ -1,5 +1,10 @@
 
-// BetterC
+
+version (WebAssembly) {
+} else {
+	static assert(0, "This module should only be used with WebAssembly.");
+}
+
 extern(C):
 
 import helpers : d_memory_copy;

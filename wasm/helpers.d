@@ -1,4 +1,10 @@
 
+
+version (WebAssembly) {
+} else {
+	static assert(0, "This module should only be used with WebAssembly.");
+}
+
 extern(C):
 
 void* memset(void* ptr, int value, size_t num) {

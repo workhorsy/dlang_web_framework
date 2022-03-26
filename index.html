@@ -13,17 +13,51 @@
 	</body>
 	<script>
 		let exports = {};
+		let _element_id = 0;
+		let _element_to_id = {};
 
-		const console_log = (pointer, length) => {
-			const view = new Uint8Array(exports.memory.buffer, pointer, length);
-			let message = new TextDecoder().decode(view);
+		const js_get_string = (pointer, length) => {
+			let view = new Uint8Array(exports.memory.buffer, pointer, length);
+			let string = new TextDecoder().decode(view);
+			return string;
+		};
+
+		const js_console_log = (pointer, length) => {
+			let message = js_get_string(pointer, length);
 			console.log(message);
+		};
+
+		const js_document_querySelector = (pointer, length) => {
+			let query = js_get_string(pointer, length);
+
+			let element = document.querySelector(query);
+			if (element) {
+				_element_id += 1;
+				let id = _element_id;
+				_element_to_id[id] = element;
+				return id;
+			}
+
+			return -1;
+		};
+
+		const js_element_addEventListener = (id, event_name_pointer, event_name_length, function_name_pointer, function_name_length) => {
+			let event_name = js_get_string(event_name_pointer, event_name_length);
+			console.log("!!! event_name: ", event_name);
+
+			let function_name = js_get_string(function_name_pointer, function_name_length);
+			console.log("!!! function_name: ", function_name);
+
+			var element = _element_to_id[id];
+			element.addEventListener(event_name, eval(function_name));
 		};
 
 		const import_object = {
 			memory: new WebAssembly.Memory({ initial: 256, maximum: 256, shared: true }),
 			env: {
-				console_log,
+				js_console_log,
+				js_document_querySelector,
+				js_element_addEventListener,
 			},
 		};
 
@@ -33,12 +67,7 @@
 			WebAssembly.instantiate(bytes, import_object)
 		).then(result => {
 			exports = result.instance.exports;
-
-			let go = document.querySelector("#go");
-			go.addEventListener("click", exports.boom);
-
-			let add = document.querySelector("#add");
-			add.addEventListener("click", on_add);
+			exports.main();
 		});
 
 		function on_add() {

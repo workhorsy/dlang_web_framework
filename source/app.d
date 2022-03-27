@@ -1,5 +1,6 @@
 // Copyright (c) 2022 Matthew Brennan Jones <matthew.brennan.jones@gmail.com>
-// This file is licensed under the MIT License
+// Licensed under the MIT License
+// A Dlang web framework
 // https://github.com/workhorsy/dlang_web_framework
 
 

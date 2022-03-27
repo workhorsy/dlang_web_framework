@@ -50,6 +50,9 @@ int main() {
 			case "GET:/index.html", "GET:/":
 				server.write_file(request, status, mime_type_map["html"], "index.html");
 				break;
+			case "GET:/boot.js":
+				server.write_file(request, status, mime_type_map["js"], "boot.js");
+				break;
 			case "GET:/wasm.wasm":
 				server.write_file(request, status, mime_type_map["wasm"], "wasm.wasm");
 				break;

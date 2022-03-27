@@ -34,6 +34,7 @@ void _d_array_slice_copy(void* dst, size_t dstlen, void* src, size_t srclen, siz
 }
 
 void d_memory_copy(string src, out char[1024] d_memory, out size_t d_memory_len) {
+	d_memory[] = 0;
 	foreach (i ; 0 .. src.length) {
 		d_memory[i] = src[i];
 	}

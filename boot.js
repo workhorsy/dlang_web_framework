@@ -32,6 +32,58 @@ class MemoryManager {
 	}
 }
 
+class BindableProxy {
+	constructor(data) {
+		this.bindings = [];
+
+		let container_bindable = this;
+		let proxy = new Proxy(data, {
+			set(obj, prop, value) {
+					obj[prop] = value;
+					console.log("!!!: ", obj, " ", proxy, " ", prop, " ", value);
+					container_bindable.update(prop, value);
+
+				return true;
+			}
+		});
+		this.data = proxy;
+	}
+
+	bind(property, element, attribute, event_names) {
+		// Added update event listeners for each event name
+		if (event_names) {
+			for (let name of event_names) {
+				element.addEventListener(name, (e) => {
+					this.data[property] = element[attribute];
+				});
+			}
+		}
+
+		// Add the binding to the list of bindings
+		this.bindings.push({
+			property: property,
+			element: element,
+			attribute: attribute,
+			event_names: event_names,
+		});
+
+		// Update initial value from data
+		element[attribute] = this.data[property];
+
+		return this;
+	}
+
+	update(property, new_value) {
+		// Update all other matching elements with new data
+		for (const binding of this.bindings) {
+			if (property == binding.property && binding.element != this) {
+				console.log("    Updating: ", binding);
+				binding.element[binding.attribute] = new_value;
+			}
+		}
+	}
+}
+
 const mm = new MemoryManager();
 
 const js_console_log = (pointer, length) => {

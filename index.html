@@ -6,10 +6,18 @@
 		<title>Dlang Web Framework</title>
 	</head>
 	<body>
-		<p>Click the buttons ...</p>
-		<button id="go">Click to boom!</button>
-		<button id="add">Click to add!</button>
-		<button id="get_user">Get User</button>
+		<div>
+			<p>Click the buttons ...</p>
+			<button id="go">Click to boom!</button>
+			<button id="add">Click to add!</button>
+			<button id="get_user">Get User</button>
+		</div>
+		<div>
+			<label for="user_name">Name: </label><input type=text id="user_name" /><span type=text id="user_name_again">Unknown Name</span>
+			<br />
+			<label for="user_weight">Weight: </label><input type=text id="user_weight" /><span type=text id="user_weight_again">Unknown Weight</span>
+			<br />
+		</div>
 	</body>
 	<script src="/boot.js"></script>
 	<script>
@@ -20,6 +28,25 @@
 
 		window.addEventListener('DOMContentLoaded', () => {
 			main('wasm.wasm');
+
+			let user_name = document.querySelector("#user_name");
+			let user_name_again = document.querySelector("#user_name_again");
+			let user_weight = document.querySelector("#user_weight");
+			let user_weight_again = document.querySelector("#user_weight_again");
+
+			let user = new BindableProxy({
+				"name" : "Some random user",
+				"weight" : 200,
+			});
+
+			user
+			.bind("name", user_name, "value", ["keyup", "paste"])
+			.bind("name", user_name_again, "innerHTML")
+			.bind("weight", user_weight, "value", ["keyup", "paste"])
+			.bind("weight", user_weight_again, "innerHTML");
+
+
+			user.data.name = "Blah Blah Blah";
 		});
 	</script>
 </html>
